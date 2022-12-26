@@ -1,59 +1,74 @@
-#include "builtins.h"
-#include "general.h"
+nclude "shell.h"
 
 /**
- * bin_exit - Implementation of the exit builtin
- * Description: Free all the memory used and
- * exit with the last status_code
- *
- * @info: Information about the shell
- * @arguments: Arguments received
- **/
-void bin_exit(general_t *info, char **arguments)
+ **_strncpy - copies a string
+ *@dest: the destination string to be copied to
+ *@src: the source string
+ *@n: the amount of characters to be copied
+ *Return: the concatenated string
+ */
+char *_strncpy(char *dest, char *src, int n)
 {
-	int status_code, status;
+	int i, j;
+	char *s = dest;
 
-	status = _TRUE;
-	if (arguments[1] != NULL)
-		status = number_controller(info, arguments[1]);
-
-	if (status == _FALSE)
-		return;
-
-	status_code = info->status_code;
-	free_memory_pp((void **) arguments);
-	free_memory_p((void *) info->buffer);
-	free_memory_p((void *) info->environment);
-	free_memory_p((void *) info);
-											exit(status_code);
+	i = 0;
+	while (src[i] != '\0' && i < n - 1)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	if (i < n)
+	{
+		j = i;
+		while (j < n)
+		{
+			dest[j] = '\0';
+			j++;
+		}
+	}
+	return (s);
 }
 
 /**
- * number_controller - Control the argument of exit
- *
- * @info: General information about the shell
- * @number: Argument of the builtin
- * Return: If the actual argument is valid, return _TRUE
- * if not, return _FALSE
- **/
-int number_controller(general_t *info, char *number)
+ **_strncat - concatenates two strings
+ *@dest: the first string
+ *@src: the second string
+ *@n: the amount of bytes to be maximally used
+ *Return: the concatenated string
+ */
+char *_strncat(char *dest, char *src, int n)
 {
-	int _number;
+	int i, j;
+	char *s = dest;
 
-	_number = _atoi(number);
-
-	if (_number < 0 || contains_letter(number))
+	i = 0;
+	j = 0;
+	while (dest[i] != '\0')
+		i++;
+	while (src[j] != '\0' && j < n)
 	{
-		info->status_code = 2;
-		info->error_code = _CODE_ILLEGAL_NUMBER;
-		error_extra(info, number);
-		return (_FALSE);
+		dest[i] = src[j];
+		i++;
+		j++;
 	}
+	if (j < n)
+		dest[i] = '\0';
+	return (s);
+}
 
-	if (_number > 255)
-		info->status_code = _number % 256;
-	else
-		info->status_code = _number;
+/**
+ **_strchr - locates a character in a string
+ *@s: the string to be parsed
+ *@c: the character to look for
+ *Return: (s) a pointer to the memory area s
+ */
+char *_strchr(char *s, char c)
+{
+	do {
+		if (*s == c)
+			return (s);
+	} while (*s++ != '\0');
 
-	return (_TRUE);
+	return (NULL);
 }
