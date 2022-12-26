@@ -16,11 +16,11 @@ char *message_selector(general_t info)
 		{_ENOENT, _CODE_ENOENT},
 		{_EACCES, _CODE_EACCES},
 		{_CMD_NOT_EXISTS, _CODE_CMD_NOT_EXISTS},
-		{_ILLEGAL_NUMBER, _CODE_ILLEGAL_NUMBER}	
+		{_ILLEGAL_NUMBER, _CODE_ILLEGAL_NUMBER}
 	};
 
 	n_options = sizeof(messages) / sizeof(messages[0]);
-	for (i = 0; i 
+	for (i = 0; i
 		if (info.error_code == messages[i].code)
 			return (messages[i].message);
 
@@ -95,4 +95,4 @@ void error_extra(general_t *info, char *extra)
 	free(number);
 	free(aux);
 	free(aux2);
-}< n_options; i++;
+} < n_options; i++;
