@@ -20,7 +20,7 @@ char *message_selector(general_t info)
 	};
 
 	n_options = sizeof(messages) / sizeof(messages[0]);
-	for (i = 0; i
+	for (i = 0; i;
 		if (info.error_code == messages[i].code)
 			return (messages[i].message);
 
