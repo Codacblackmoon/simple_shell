@@ -1,98 +1,85 @@
-#include "error.h"
-#include "general.h"
-#include "text.h"
+#include "shell.h"
 
 /**
- * message_selector - Select the message that match with the error_code
+ *_eputs - prints an input string
+ * @str: the string to be printed
  *
- * @info: General information about the shell
- *
- * Return: Error message
- **/
-char *message_selector(general_t info)
+ * Return: Nothing
+ */
+void _eputs(char *str)
 {
-	int i, n_options;
-	error_t messages[] = {
-		{_ENOENT, _CODE_ENOENT},
-		{_EACCES, _CODE_EACCES},
-		{_CMD_NOT_EXISTS, _CODE_CMD_NOT_EXISTS},
-		{_ILLEGAL_NUMBER, _CODE_ILLEGAL_NUMBER}
-	};
+	int i = 0;
 
-	n_options = sizeof(messages) / sizeof(messages[0]);
-	for (i = 0; i;
-		if (info.error_code == messages[i].code)
-			return (messages[i].message);
-
-	return ("");
-}
-/**
-* error - Print the error
-*
-* @info: General information about the shel
-**/
-void error(general_t *info)
-{
-	char *message;
-	char *number;
-	char *aux;
-	int size_number, size_message;
-
-	number = NULL;
-	message = message_selector(*info);
-	number = to_string(info->n_commands);
-
-	size_number = _strlen(number);
-	size_message = _strlen(info->argv[0]);
-
-	aux = malloc(size_message + size_number + 3);
-
-	aux = _strcpy(aux, info->argv[0]);
-	aux = _strcat(aux, ": ");
-	aux = _strcat(aux, number);
-
-	message = join_words(aux, info->command, message, ": ");
-	print_err(message);
-
-	free(message);
-	free(number);
-	free(aux);
+	if (!str)
+		return;
+	while (str[i] != '\0')
+	{
+		_eputchar(str[i]);
+		i++;
+	}
 }
 
 /**
- * error_extra - Print the error with extra information
+ * _eputchar - writes the character c to stderr
+ * @c: The character to print
  *
- * @info: General information about the shell
- * @extra: Extra information
- **/
-void error_extra(general_t *info, char *extra)
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _eputchar(char c)
 {
-	char *message, *number, *aux, *aux2;
-	int size_number, size_message, size_extra;
+	static int i;
+	static char buf[WRITE_BUF_SIZE];
 
-	number = NULL;
-	message = message_selector(*info);
-	number = to_string(info->n_commands);
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+	{
+		write(2, buf, i);
+		i = 0;
+	}
+	if (c != BUF_FLUSH)
+		buf[i++] = c;
+	return (1);
+}
 
-	size_number = _strlen(number);
-	size_message = _strlen(info->argv[0]);
-	size_extra = _strlen(extra);
+/**
+ * _putfd - writes the character c to given fd
+ * @c: The character to print
+ * @fd: The filedescriptor to write to
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _putfd(char c, int fd)
+{
+	static int i;
+	static char buf[WRITE_BUF_SIZE];
 
-	aux = malloc(size_message + size_number + 3);
-	aux = _strcpy(aux, info->argv[0]);
-	aux = _strcat(aux, ": ");
-	aux = _strcat(aux, number);
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+	{
+		write(fd, buf, i);
+		i = 0;
+	}
+	if (c != BUF_FLUSH)
+		buf[i++] = c;
+	return (1);
+}
 
-	aux2 = malloc(_strlen(message) + size_extra + 3);
-	aux2 = _strcpy(aux2, message);
-	aux2 = _strcat(aux2, ": ");
-	aux2 = _strcat(aux2, extra);
+/**
+ *_putsfd - prints an input string
+ * @str: the string to be printed
+ * @fd: the filedescriptor to write to
+ *
+ * Return: the number of chars put
+ */
+int _putsfd(char *str, int fd)
+{
+	int i = 0;
 
-	message = join_words(aux, info->command, aux2, ": ");
-	print_err(message);
-
-	free(message);
-	free(number);
-	free(aux);
-	free(aux2);
-} < n_options; i++;
+	if (!str)
+		return (0);
+	while (*str)
+	{
+		i += _putfd(*str++, fd);
+	}
+	return (i);
+}
